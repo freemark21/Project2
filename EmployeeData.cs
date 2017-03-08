@@ -28,7 +28,7 @@ namespace Project2
         private void frmEmpData_FormClosing(object sender, FormClosingEventArgs e)
         {
             DialogResult dlgResult;
-            dlgResult = MessageBox.Show("Confirm Exit", "EXIT", MessageBoxButtons.YesNo, MessageBoxIcon.Stop, MessageBoxDefaultButton.Button2);
+            dlgResult = MessageBox.Show("Exit to main menu?", "EXIT TO MAIN MENU", MessageBoxButtons.YesNo, MessageBoxIcon.Stop, MessageBoxDefaultButton.Button2);
             if (dlgResult == System.Windows.Forms.DialogResult.No)
             {
                 e.Cancel = true;
@@ -117,15 +117,8 @@ namespace Project2
         private void DisplayEmployeePayroll(Int32 intEmpID)
         {
             DataSet dsData;
-            Decimal decPayRate;
 
-            decPayRate = clsDataBase.GetEmployeePayrate(intEmpID);
-            if (decPayRate < 0M)
-            {
-                lblError.Text = "Unable to retrieve payrate for specified employee";
-            }
-
-            dsData = clsDataBase.GetEmployeePayroll(intEmpID);
+            dsData = clsDataBase.GetPayroll(intEmpID);
             if (dsData == null)
             {
                 lblError.Text = "Error retrieving payroll info";
@@ -152,6 +145,7 @@ namespace Project2
             lblError.Text = "";
             intCurrRow = 0;
             ShowEmployee();
+            DisplayEmployeePayroll(Convert.ToInt32(txtEmpID.Text));
         }
 
         private void btnLast_Click(object sender, EventArgs e)
@@ -159,6 +153,7 @@ namespace Project2
             lblError.Text = "";
             intCurrRow = dsEmp.Tables[0].Rows.Count - 1;
             ShowEmployee();
+            DisplayEmployeePayroll(Convert.ToInt32(txtEmpID.Text));
         }
 
         private void btnPrev_Click(object sender, EventArgs e)
@@ -169,10 +164,8 @@ namespace Project2
             {
                 intCurrRow = dsEmp.Tables[0].Rows.Count - 1;
             }
-            else
-            {
-                ShowEmployee();
-            }
+            DisplayEmployeePayroll(Convert.ToInt32(txtEmpID.Text));
+            ShowEmployee();
         }
 
         private void btnNext_Click(object sender, EventArgs e)
@@ -183,10 +176,10 @@ namespace Project2
             {
                 intCurrRow = 0;
             }
-            else
-            {
-                ShowEmployee();
-            }
+
+            ShowEmployee();
+            DisplayEmployeePayroll(Convert.ToInt32(txtEmpID.Text));
+
         }
     }
 }

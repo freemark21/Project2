@@ -23,7 +23,7 @@ namespace Project2
             SqlConnection cnSQL = null;
             Boolean blnErrorOccurred = false;
 
-            //** Verify parameter
+            /* Verify parameter */
             if (strConnName.Trim().Length < 1)
             {
                 blnErrorOccurred = true;
@@ -44,7 +44,6 @@ namespace Project2
                 catch (Exception ex)
                 {
                     blnErrorOccurred = true;
-
                     cnSQL.Dispose();
                 }
             }
@@ -75,7 +74,7 @@ namespace Project2
             }
             else
             {
-                //** Build command to execute stored procedure
+                /* Build command to execute stored procedure */
                 cmdSQL = new SqlCommand();
                 cmdSQL.Connection = cnSQL;
                 cmdSQL.CommandType = CommandType.StoredProcedure;
@@ -116,142 +115,7 @@ namespace Project2
             }
         }
 
-        public static DataSet GetEmployeeNames()
-        {
-            SqlConnection cnSQL;
-            SqlCommand cmdSQL;
-            SqlDataAdapter daSQL;
-            DataSet dsSQL = null;
-            Boolean blnErrorOccurred = false;
-
-            cnSQL = AcquireConnection();
-            if (cnSQL == null)
-            {
-                blnErrorOccurred = true;
-            }
-            else
-            {
-                //** Build command to execute stored procedure
-                cmdSQL = new SqlCommand();
-                cmdSQL.Connection = cnSQL;
-                cmdSQL.CommandType = CommandType.StoredProcedure;
-                cmdSQL.CommandText = "GetAllEmployeeNames";
-
-                cmdSQL.Parameters.Add(new SqlParameter("@ErrCode", SqlDbType.Int));
-                cmdSQL.Parameters["@ErrCode"].Direction = ParameterDirection.ReturnValue;
-
-                dsSQL = new DataSet();
-
-                try
-                {
-                    daSQL = new SqlDataAdapter(cmdSQL);
-                    daSQL.Fill(dsSQL);
-                    daSQL.Dispose();
-                }
-                catch (Exception ex)
-                {
-                    blnErrorOccurred = true;
-                    dsSQL.Dispose();
-                }
-                finally
-                {
-                    cmdSQL.Parameters.Clear();
-                    cmdSQL.Dispose();
-                    cnSQL.Close();
-                    cnSQL.Dispose();
-                }
-            }
-
-            if (blnErrorOccurred)
-            {
-                return null;
-            }
-            else
-            {
-                return dsSQL;
-            }
-        }
-
-        public static Decimal GetEmployeePayrate(Int32 IntEmpID)
-        {
-            SqlConnection cnSQL;
-            SqlCommand cmdSQL;
-            Boolean blnErrorOccurred = false;
-            Decimal decPay = 0M;
-            Int32 intRetCode;
-            cmdSQL = new SqlCommand();
-
-
-            if (IntEmpID < 1)
-            {
-                blnErrorOccurred = true;
-            }
-            else
-            {
-                cnSQL = AcquireConnection();
-                if (cnSQL == null)
-                {
-                    blnErrorOccurred = true;
-                }
-                else
-                {
-                    //** Build command to execute stored procedure
-
-                    cmdSQL.Connection = cnSQL;
-                    cmdSQL.CommandType = CommandType.StoredProcedure;
-                    cmdSQL.CommandText = "GetPayrateByID";
-
-                    cmdSQL.Parameters.Add(new SqlParameter("@EmpID", SqlDbType.Int));
-                    cmdSQL.Parameters["@EmpID"].Direction = ParameterDirection.Input;
-                    cmdSQL.Parameters["@EmpID"].Value = IntEmpID;
-
-                    cmdSQL.Parameters.Add(new SqlParameter("@PayRate", SqlDbType.SmallMoney));
-                    cmdSQL.Parameters["@PayRate"].Direction = ParameterDirection.Output;
-
-                    cmdSQL.Parameters.Add(new SqlParameter("@ErrCode", SqlDbType.Int));
-                    cmdSQL.Parameters["@ErrCode"].Direction = ParameterDirection.ReturnValue;
-                }
-
-                try
-                {
-                    intRetCode = cmdSQL.ExecuteNonQuery();
-                }
-                catch (Exception ex)
-                {
-                    blnErrorOccurred = true;
-                }
-                finally
-                {
-                    cnSQL.Close();
-                    cnSQL.Dispose();
-                }
-            }
-
-            if (!blnErrorOccurred)
-            {
-                if (cmdSQL.Parameters["@PayRate"].Value == DBNull.Value)
-                {
-                    blnErrorOccurred = true;
-                }
-                else
-                {
-                    decPay = Convert.ToDecimal(cmdSQL.Parameters["@PayRate"].Value);
-                }
-            }
-            cmdSQL.Parameters.Clear();
-            cmdSQL.Dispose();
-
-            if (blnErrorOccurred)
-            {
-                return -1.0M;
-            }
-            else
-            {
-                return decPay;
-            }
-        }
-
-        public static DataSet GetEmployeePayroll(Int32 IntEmpID)
+        public static DataSet GetPayroll(Int32 IntEmpID)
         {
             SqlConnection cnSQL;
             SqlCommand cmdSQL;
@@ -266,7 +130,6 @@ namespace Project2
             else
             {
                 cnSQL = AcquireConnection();
-                //** Build command to execute stored procedure
                 cmdSQL = new SqlCommand();
                 cmdSQL.Connection = cnSQL;
                 cmdSQL.CommandType = CommandType.StoredProcedure;
